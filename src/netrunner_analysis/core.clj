@@ -20,7 +20,7 @@
    :cost (cost breaker ice)})
 
 (defn result-to-string [result]
-  (str "It costs " (:cost result) " credits for " (:breaker result) " to break " (:ice result)))
+  (str "It costs " (:cost result) " credits for " (:breaker result) " to break " (:ice result) "\n"))
 
 (def combinations (for [breaker cards/breakers
                         ice cards/ices
@@ -28,12 +28,22 @@
                                   (= (:type breaker) (:type ice)))]
                     (result breaker ice)))
 
-(defn sort-by-cost [results]
-  (sort #(< (:cost %1) (:cost %2)) results))
+(defn sort-by-cost [f results]
+  (sort #(f (:cost %1) (:cost %2)) results))
 
-(println "Result:")
-(doall (->> combinations
-            sort-by-cost
-            (map result-to-string)
-            (map println)))
+(defn only-breaker [breaker-name results]
+  (filter #(= (:breaker %) breaker-name) results))
+
+(defn only-ice [ice-name results]
+  (filter #(= (:ice %) ice-name) results))
+
+;(println "Result:")
+(println 
+ (->> combinations
+      ;(only-breaker "Femme Fatale")
+      (only-ice "Shadow")
+      (sort-by-cost <)
+      (map result-to-string)
+      ;(map println)
+      ))
 
